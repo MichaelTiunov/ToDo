@@ -86,25 +86,25 @@
             var dragSrcEl = null;
 
             function handleDragStart(e) {
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/html', this.innerHTML);
+                e.originalEvent.dataTransfer.effectAllowed = 'move';
+                e.originalEvent.dataTransfer.setData('text/html', this.innerHTML);
                 dragSrcEl = this;
                 // this/e.target is the source node.
-                this.addClassName('moving');
+                $(this).addClass('moving');
             };
             function handleDragOver(e) {
                 if (e.preventDefault) {
                     e.preventDefault(); // Allows us to drop.
                 }
-                e.dataTransfer.dropEffect = 'move';
+                e.originalEvent.dataTransfer.dropEffect = 'move';
                 return false;
             };
             function handleDragEnter(e) {
-                this.addClassName('over');
+                $(this).addClass('over');
             };
             function handleDragLeave(e) {
                 // this/e.target is previous target element.
-                this.removeClassName('over');
+                $(this).removeClass('over');
             };
             function handleDrop(e) {
                 // this/e.target is current target element.
@@ -114,33 +114,23 @@
                 // Don't do anything if we're dropping on the same column we're dragging.
                 if (dragSrcEl != this) {
                     dragSrcEl.innerHTML = this.innerHTML;
-                    this.innerHTML = e.dataTransfer.getData('text/html');
-                    // Set number of times the column has been moved.
-                    var count = this.querySelector('.count');
-                    var newCount = parseInt(count.getAttribute('data-col-moves')) + 1;
-                    count.setAttribute('data-col-moves', newCount);
-                    count.textContent = 'moves: ' + newCount;
+                    this.innerHTML = e.originalEvent.dataTransfer.getData('text/html');
                 }
                 return false;
             };
             function handleDragEnd(e) {
                 // this/e.target is the source node.
-                [].forEach.call(cols, function (col) {
-                    col.removeClassName('over');
-                    col.removeClassName('moving');
-                });
+                $(cols).removeClass('over').removeClass('moving');
             };
 
+            $(cols)
+                .on('dragstart', handleDragStart)
+                .on('dragenter', handleDragEnter)
+            .on('dragover', handleDragOver)
+            .on('dragleave', handleDragLeave)
+            .on('drop', handleDrop)
+            .on('dragend', handleDragEnd);
 
-            [].forEach.call(cols, function (col) {
-                //col.setAttribute('draggable', 'true'); // Enable columns to be draggable.
-                col.addEventListener('dragstart', handleDragStart, false);
-                col.addEventListener('dragenter', handleDragEnter, false);
-                col.addEventListener('dragover', handleDragOver, false);
-                col.addEventListener('dragleave', handleDragLeave, false);
-                col.addEventListener('drop', handleDrop, false);
-                col.addEventListener('dragend', handleDragEnd, false);
-            });
         });
 
         $(function () {
