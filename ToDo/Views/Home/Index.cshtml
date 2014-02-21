@@ -1,81 +1,85 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
+<link href="~/Content/style.css" rel="stylesheet" />
 <style>
-    .status {
-        background: none repeat scroll 0 0 #DBDBDB;
-        border-radius: 3px;
-        float: left;
-        margin: 0 5px;
-        padding: 4px 3px 3px;
-        position: relative;
-        width: 250px;
-    }
 
-    .status-header {
-        min-height: 19px;
-        padding: 3px 26px 2px 6px;
-        position: relative;
-    }
-
-    .js-cards {
-        clear: both;
-        margin-bottom: 0;
-        min-height: 20px;
-        overflow-x: hidden;
-        overflow-y: auto;
-        padding: 4px 4px 1px;
-        z-index: 1;
-    }
-    .open-card-composer {
-        border-radius: 0 0 3px 3px;
-        color: #939393;
-        display: block;
-        margin: 2px -3px -3px;
-        padding: 7px 10px;
-        position: relative;
-        text-decoration: none;
-    }
 </style>
+
+
+
 <div class="statusContainer">
-    <div class="status js-toDo">
-        <div class="status-header">
+    <div class="list js-toDo">
+        <div class="list-header js-list-header non-empty clearfix editable">
             ToDo
         </div>
-        <div class="js-cards">
+        <div class="list-cards fancy-scrollbar clearfix js-list-cards js-sortable ui-sortable">
 
         </div>
         <a href="#" class="open-card-composer js-open-card-composer">Add a card…</a>
     </div>
-    <div class="status js-InProgress">
-        <div class="status-header">
+    <div class="list js-InProgress">
+        <div class="list-header js-list-header non-empty clearfix editable">
             In Progress
         </div>
-        <div class="js-cards">
+        <div class="list-cards fancy-scrollbar clearfix js-list-cards js-sortable ui-sortable">
 
         </div>
         <a href="#" class="open-card-composer js-open-card-composer">Add a card…</a>
     </div>
-    <div class="status js-Done">
-        <div class="status-header">
+    <div class="list js-Done">
+        <div class="list-header js-list-header non-empty clearfix editable">
             Done
         </div>
-        <div class="js-cards">
+        <div class="list-cards fancy-scrollbar clearfix js-list-cards js-sortable ui-sortable">
 
         </div>
         <a href="#" class="open-card-composer js-open-card-composer">Add a card…</a>
     </div>
 </div>
 
+<div id="container">
+
+</div>
+
+<script type="text/template" id="assignUserTemplate">
+    <li class="js-user">
+        <span class="js-userName"></span>
+        <span class="icon-cancel"></span>
+    </li>
+</script>
+
 @section scripts
 {
+
+
+
+    <script type="text/template" id="cardTemplate">
+        <div class="card-composer">
+            <div class="list-card js-composer" style="padding-bottom: 0px;">
+                <div class="list-card-labels clearfix js-list-card-composer-labels"></div>
+                <textarea class="list-card-composer-textarea js-card-title"></textarea>
+                <div class="list-card-members js-list-card-composer-members"></div>
+            </div>
+            <div class="cc-controls clearfix">
+                <input type="submit" value="Add" class="primary confirm js-add-card"> <a href="#" class="icon-lg icon-close dark-hover js-cancel"></a>
+                <a href="#" class="cc-opt icon-lg icon-menu dark-hover js-cc-menu"></a>
+            </div>
+        </div>
+    </script>
+
     <script>
         $(function () {
+            $('.open-card-composer').on('click', function () {
+                $(this).parent('.list').find('.list-cards').append($('#cardTemplate').html());
+                $(this).hide();
+            });
+
             Array.prototype.where = function (searchField, searchCriteria) {
                 var x = [];
 
                 for (var i = 0; i < this.length; i++) {
-                    
+
                 }
 
                 for (var z in this) {
@@ -85,6 +89,17 @@
                 }
                 return x;
             };
+
+            String.prototype.format = function () {
+                var args = arguments;
+                return this.replace(/{(\d+)}/g, function (match, number) {
+                    return typeof args[number] != 'undefined'
+                      ? args[number]
+                      : match
+                    ;
+                });
+            };
+
             var cards = [
                 { id: 0, name: 'name1', type: 'bug', status: 0 },
                 { id: 1, name: 'name2', type: 'task', status: 0 },
@@ -93,6 +108,15 @@
                 { id: 4, name: 'name5', type: 'bug', status: 2 },
                 { id: 5, name: 'name6', type: 'task', status: 2 }
             ];
+
+
+            //var cardTemplate = $("#cardTemplate").html();
+
+
+            //var template = cardTemplate.format("http://example.com", "Link Title");
+
+
+            //$("#container").append(template);
 
             var toDoList = cards.where('status', 0);
             console.log(toDoList);
