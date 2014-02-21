@@ -1,0 +1,101 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<style>
+    .status {
+        background: none repeat scroll 0 0 #DBDBDB;
+        border-radius: 3px;
+        float: left;
+        margin: 0 5px;
+        padding: 4px 3px 3px;
+        position: relative;
+        width: 250px;
+    }
+
+    .status-header {
+        min-height: 19px;
+        padding: 3px 26px 2px 6px;
+        position: relative;
+    }
+
+    .js-cards {
+        clear: both;
+        margin-bottom: 0;
+        min-height: 20px;
+        overflow-x: hidden;
+        overflow-y: auto;
+        padding: 4px 4px 1px;
+        z-index: 1;
+    }
+    .open-card-composer {
+        border-radius: 0 0 3px 3px;
+        color: #939393;
+        display: block;
+        margin: 2px -3px -3px;
+        padding: 7px 10px;
+        position: relative;
+        text-decoration: none;
+    }
+</style>
+<div class="statusContainer">
+    <div class="status js-toDo">
+        <div class="status-header">
+            ToDo
+        </div>
+        <div class="js-cards">
+
+        </div>
+        <a href="#" class="open-card-composer js-open-card-composer">Add a card…</a>
+    </div>
+    <div class="status js-InProgress">
+        <div class="status-header">
+            In Progress
+        </div>
+        <div class="js-cards">
+
+        </div>
+        <a href="#" class="open-card-composer js-open-card-composer">Add a card…</a>
+    </div>
+    <div class="status js-Done">
+        <div class="status-header">
+            Done
+        </div>
+        <div class="js-cards">
+
+        </div>
+        <a href="#" class="open-card-composer js-open-card-composer">Add a card…</a>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(function () {
+            Array.prototype.where = function (searchField, searchCriteria) {
+                var x = [];
+
+                for (var i = 0; i < this.length; i++) {
+                    
+                }
+
+                for (var z in this) {
+                    if (z[searchField] == searchCriteria) {
+                        x.push(z);
+                    }
+                }
+                return x;
+            };
+            var cards = [
+                { id: 0, name: 'name1', type: 'bug', status: 0 },
+                { id: 1, name: 'name2', type: 'task', status: 0 },
+                { id: 2, name: 'name3', type: 'bug', status: 1 },
+                { id: 3, name: 'name4', type: 'task', status: 1 },
+                { id: 4, name: 'name5', type: 'bug', status: 2 },
+                { id: 5, name: 'name6', type: 'task', status: 2 }
+            ];
+
+            var toDoList = cards.where('status', 0);
+            console.log(toDoList);
+        });
+    </script>
+}
