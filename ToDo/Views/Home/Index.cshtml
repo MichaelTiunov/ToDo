@@ -42,13 +42,6 @@
 
 </div>
 
-<script type="text/template" id="assignUserTemplate">
-    <li class="js-user">
-        <span class="js-userName"></span>
-        <span class="icon-cancel"></span>
-    </li>
-</script>
-
 @section scripts
 {
     <script type="text/template" id="cardTemplate">
@@ -82,7 +75,7 @@
         $(function () {
             var id = 'statusContainer';
 
-            var cols = document.querySelectorAll('.' + id + ' .list');
+            var cols = document.querySelectorAll('.' + id + ' .list .list-header');
             var dragSrcEl = null;
 
             function handleDragStart(e) {
@@ -124,6 +117,7 @@
             };
 
             $(cols)
+                .attr('draggable',true)
                 .on('dragstart', handleDragStart)
                 .on('dragenter', handleDragEnter)
             .on('dragover', handleDragOver)
