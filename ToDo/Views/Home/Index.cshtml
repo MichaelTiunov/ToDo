@@ -9,7 +9,7 @@
 
 
 <div class="statusContainer">
-    <div class="list js-toDo">
+    <div class="list js-toDo" draggable="true">
         <div class="list-header js-list-header non-empty clearfix editable">
             ToDo
         </div>
@@ -18,7 +18,7 @@
         </div>
         <a href="#" class="open-card-composer js-open-card-composer">Add a card…</a>
     </div>
-    <div class="list js-InProgress">
+    <div class="list js-InProgress" draggable="true">
         <div class="list-header js-list-header non-empty clearfix editable">
             In Progress
         </div>
@@ -27,7 +27,7 @@
         </div>
         <a href="#" class="open-card-composer js-open-card-composer">Add a card…</a>
     </div>
-    <div class="list js-Done">
+    <div class="list js-Done" draggable="true">
         <div class="list-header js-list-header non-empty clearfix editable">
             Done
         </div>
@@ -77,6 +77,72 @@
     </script>
 
     <script>
+
+        // Full example
+        $(function () {
+            var id = 'statusContainer';
+
+            var cols = document.querySelectorAll('.' + id + ' .list');
+            var dragSrcEl = null;
+
+            function handleDragStart(e) {
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/html', this.innerHTML);
+                dragSrcEl = this;
+                // this/e.target is the source node.
+                this.addClassName('moving');
+            };
+            function handleDragOver(e) {
+                if (e.preventDefault) {
+                    e.preventDefault(); // Allows us to drop.
+                }
+                e.dataTransfer.dropEffect = 'move';
+                return false;
+            };
+            function handleDragEnter(e) {
+                this.addClassName('over');
+            };
+            function handleDragLeave(e) {
+                // this/e.target is previous target element.
+                this.removeClassName('over');
+            };
+            function handleDrop(e) {
+                // this/e.target is current target element.
+                if (e.stopPropagation) {
+                    e.stopPropagation(); // stops the browser from redirecting.
+                }
+                // Don't do anything if we're dropping on the same column we're dragging.
+                if (dragSrcEl != this) {
+                    dragSrcEl.innerHTML = this.innerHTML;
+                    this.innerHTML = e.dataTransfer.getData('text/html');
+                    // Set number of times the column has been moved.
+                    var count = this.querySelector('.count');
+                    var newCount = parseInt(count.getAttribute('data-col-moves')) + 1;
+                    count.setAttribute('data-col-moves', newCount);
+                    count.textContent = 'moves: ' + newCount;
+                }
+                return false;
+            };
+            function handleDragEnd(e) {
+                // this/e.target is the source node.
+                [].forEach.call(cols, function (col) {
+                    col.removeClassName('over');
+                    col.removeClassName('moving');
+                });
+            };
+
+
+            [].forEach.call(cols, function (col) {
+                //col.setAttribute('draggable', 'true'); // Enable columns to be draggable.
+                col.addEventListener('dragstart', handleDragStart, false);
+                col.addEventListener('dragenter', handleDragEnter, false);
+                col.addEventListener('dragover', handleDragOver, false);
+                col.addEventListener('dragleave', handleDragLeave, false);
+                col.addEventListener('drop', handleDrop, false);
+                col.addEventListener('dragend', handleDragEnd, false);
+            });
+        });
+
         $(function () {
             $('.open-card-composer').on('click', function () {
 
@@ -91,9 +157,17 @@
                 $(this).hide();
                 $('.js-add-card', parent).on('click', function () {
                     var cardValue = $('.js-composer textarea', parent).val();
+
+                    if (!cardValue) return;
+
                     var cardTemplate = $('#cardTemplate').html().format(cardValue);
                     $('.list-cards', parent).append(cardTemplate);
-                    $('.card-composer').remove();
+
+                    $('.card-composer', parent).remove();
+                    link.show();
+                });
+                $('.js-cancel', parent).on('click', function () {
+                    $('.card-composer', parent).remove();
                     link.show();
                 });
             });
@@ -117,9 +191,8 @@
                 var args = arguments;
                 return this.replace(/{(\d+)}/g, function (match, number) {
                     return typeof args[number] != 'undefined'
-                            ? args[number]
-                            : match
-                    ;
+                        ? args[number]
+                        : match;
                 });
             };
 
